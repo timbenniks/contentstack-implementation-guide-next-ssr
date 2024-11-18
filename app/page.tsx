@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import ContentstackLivePreview from "@contentstack/live-preview-utils";
-import { getPage } from "@/lib/contentstack";
+import { getPage, initLivePreview } from "@/lib/contentstack";
 import { useEffect, useState } from "react";
 import { Page } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
@@ -14,27 +14,26 @@ export default function Home() {
   const entry_uid = searchParams.get("entry_uid");
   const content_type_uid = searchParams.get("content_type_uid");
 
-  const contentTypeUid = searchParams.get("content_type_uid");
-
   const [page, setPage] = useState<Page>();
 
   const getContent = async () => {
     const page = await getPage("/", {
       live_preview,
-      content_type_uid,
-      contentTypeUid,
+      contentTypeUid: content_type_uid,
+      entryUid: entry_uid,
     } as LivePreviewQuery);
     setPage(page);
   };
 
   useEffect(() => {
+    initLivePreview();
     ContentstackLivePreview.onEntryChange(getContent);
   }, []);
 
   getContent();
 
   return (
-    <main className="max-w-screen-2xl mx-auto">
+    <main className="max-w-screen-md mx-auto">
       <section className="p-4">
         {live_preview ? (
           <ul className="mb-8 text-sm">
@@ -92,7 +91,7 @@ export default function Home() {
               <div
                 key={block._metadata.uid}
                 {...(page?.$ && page?.$[`blocks__${index}`])}
-                className={`flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 ${
+                className={`flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 bg-slate-100 ${
                   isImageLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
