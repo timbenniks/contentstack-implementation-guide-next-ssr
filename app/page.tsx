@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import ContentstackLivePreview from "@contentstack/live-preview-utils";
-import { getPage, initLivePreview } from "@/lib/contentstack";
+import { getPage, initLivePreview, stack } from "@/lib/contentstack";
 import { useEffect, useState } from "react";
 import { Page } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
-import { LivePreviewQuery } from "@contentstack/delivery-sdk";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -14,20 +12,23 @@ export default function Home() {
   const entry_uid = searchParams.get("entry_uid");
   const content_type_uid = searchParams.get("content_type_uid");
 
+  if (live_preview) {
+    stack.livePreviewQuery({
+      live_preview,
+      contentTypeUid: content_type_uid || "",
+      entryUid: entry_uid || "",
+    });
+  }
+
   const [page, setPage] = useState<Page>();
 
   const getContent = async () => {
-    const page = await getPage("/", {
-      live_preview,
-      contentTypeUid: content_type_uid,
-      entryUid: entry_uid,
-    } as LivePreviewQuery);
+    const page = await getPage("/");
     setPage(page);
   };
 
   useEffect(() => {
     initLivePreview();
-    ContentstackLivePreview.onEntryChange(getContent);
   }, []);
 
   getContent();

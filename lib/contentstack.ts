@@ -37,9 +37,7 @@ export function initLivePreview() {
 }
 
 
-export async function getPage(url: string, livePreviewQuery: LivePreviewQuery) {
-  stack.livePreviewQuery(livePreviewQuery)
-
+export async function getPage(url: string) {
   const result = await stack
     .contentType("page")
     .entry()
