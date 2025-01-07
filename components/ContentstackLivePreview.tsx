@@ -11,10 +11,11 @@ export function ContentstackLivePreview({
   const livePreviewEnabled =
     process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === "true";
 
-  livePreviewEnabled &&
-    useEffect(() => {
+  useEffect(() => {
+    if (livePreviewEnabled) {
       initLivePreview();
-    }, []);
+    }
+  }, []);
 
   return <>{children}</>;
 }
