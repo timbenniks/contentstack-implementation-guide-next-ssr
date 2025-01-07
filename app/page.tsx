@@ -1,16 +1,14 @@
-"use client";
-
+import { getPage, stack } from "@/lib/contentstack";
+import { headers } from "next/headers";
 import Image from "next/image";
-import { getPage, initLivePreview, stack } from "@/lib/contentstack";
-import { useEffect, useState } from "react";
-import { Page } from "@/lib/types";
-import { useSearchParams } from "next/navigation";
 
-export default function Home() {
-  const searchParams = useSearchParams();
-  const live_preview = searchParams.get("live_preview");
-  const entry_uid = searchParams.get("entry_uid");
-  const content_type_uid = searchParams.get("content_type_uid");
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<any>;
+}) {
+  await headers();
+  const { live_preview, entry_uid, content_type_uid } = await searchParams;
 
   if (live_preview) {
     stack.livePreviewQuery({
@@ -20,18 +18,7 @@ export default function Home() {
     });
   }
 
-  const [page, setPage] = useState<Page>();
-
-  const getContent = async () => {
-    const page = await getPage("/");
-    setPage(page);
-  };
-
-  useEffect(() => {
-    initLivePreview();
-  }, []);
-
-  getContent();
+  const page = await getPage("/");
 
   return (
     <main className="max-w-screen-md mx-auto">

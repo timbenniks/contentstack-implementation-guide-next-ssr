@@ -1,4 +1,4 @@
-import contentstack, { Region, QueryOperation, LivePreviewQuery } from "@contentstack/delivery-sdk"
+import contentstack, { Region, QueryOperation } from "@contentstack/delivery-sdk"
 import ContentstackLivePreview, { IStackSdk } from "@contentstack/live-preview-utils";
 import { Page } from "./types";
 
@@ -35,7 +35,6 @@ export function initLivePreview() {
     },
   });
 }
-
 
 export async function getPage(url: string) {
   const result = await stack
