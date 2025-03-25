@@ -1,16 +1,20 @@
-import contentstack, { Region, QueryOperation } from "@contentstack/delivery-sdk"
+import contentstack, { QueryOperation } from "@contentstack/delivery-sdk"
 import ContentstackLivePreview, { IStackSdk } from "@contentstack/live-preview-utils";
+import { getContentstackEndpoints, getRegionForString } from "@timbenniks/contentstack-endpoints";
 import { Page } from "./types";
+
+const region = getRegionForString(process.env.NEXT_PUBLIC_CONTENTSTACK_REGION as string)
+const endpoints = getContentstackEndpoints(region, true)
 
 export const stack = contentstack.stack({
   apiKey: process.env.NEXT_PUBLIC_CONTENTSTACK_API_KEY as string,
   deliveryToken: process.env.NEXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN as string,
   environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
-  region: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === 'EU' ? Region.EU : Region.US,
+  region,
   live_preview: {
     enable: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW === 'true',
     preview_token: process.env.NEXT_PUBLIC_CONTENTSTACK_PREVIEW_TOKEN,
-    host: process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === 'EU' ? "eu-rest-preview.contentstack.com" : "rest-preview.contentstack.com",
+    host: endpoints.preview,
   }
 });
 
@@ -25,13 +29,11 @@ export function initLivePreview() {
       environment: process.env.NEXT_PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
     },
     clientUrlParams: {
-      host:
-        process.env.NEXT_PUBLIC_CONTENTSTACK_REGION === "EU"
-          ? "eu-app.contentstack.com"
-          : "app.contentstack.com",
+      host: endpoints.application
     },
     editButton: {
       enable: true,
+      exclude: ["outsideLivePreviewPortal"]
     },
   });
 }
